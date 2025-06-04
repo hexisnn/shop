@@ -30,7 +30,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    entrypoint: ["alembic", "history"]
+    command: 'alembic upgrade head'
     depends_on:
       - db  # Ждет, пока PostgreSQL станет доступен
   db:

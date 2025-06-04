@@ -5,6 +5,8 @@ from app.models import Users
 from fastapi import HTTPException
 from app.services.user_service import userService
 import os
+from app.utils.password import *
+
 
 from dotenv import load_dotenv
 
@@ -18,10 +20,12 @@ class AuthService:
             if not exist_user:
                 return RedirectResponse(os.getenv("BASE_URL") + "/auth/registration")
             
-            if exist_user.password == user_data.password:
-                return user_data
+            if equal_passwords(user_data.password, exist_user.password):
+                return {"msg": "Good data"}
+            else:
+                return HTTPException(400, "Bad request")
 
-            return HTTPException(400, "Bad request")
+            
         except Exception as e:
             raise e
     
@@ -30,6 +34,8 @@ class AuthService:
             if await userService.get_one_byUsername(user_dict["username"], db):
                 return RedirectResponse(os.getenv("BASE_URL") + "/auth/login")
             
+            user_dict["password"] = hash_password(user_dict["password"])
+
             user = Users(**user_dict)
  
             db.add(user)
