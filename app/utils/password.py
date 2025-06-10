@@ -12,7 +12,7 @@ def hash_password(password: str):
 
 def equal_passwords(input_password: str, exist_password: str):
     hash_input_password = hash_password(input_password)
-
+    
     if hash_input_password == exist_password:
         return True
     else:

@@ -1,5 +1,5 @@
 from fastapi.responses import RedirectResponse
-from app.api.v1.schemas import User
+from app.api.v1.schemas import UserLogin, User
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Users
 from fastapi import HTTPException
@@ -13,9 +13,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class AuthService:
-    async def login(self, user_data: User, db: AsyncSession):
+    async def login(self, user_data: UserLogin, db: AsyncSession):
         try:
-            exist_user = await userService.get_one_byUsername(user_data.username, db)
+            exist_user = await userService.get_one_byEmail(user_data.email, db)
 
             if not exist_user:
                 return RedirectResponse(os.getenv("BASE_URL") + "/auth/registration")
@@ -31,7 +31,7 @@ class AuthService:
     
     async def registration(self, user_dict: dict, db: AsyncSession):
         try:
-            if await userService.get_one_byUsername(user_dict["username"], db):
+            if await userService.get_one_byEmail(user_dict["email"], db):
                 return RedirectResponse(os.getenv("BASE_URL") + "/auth/login")
             
             user_dict["password"] = hash_password(user_dict["password"])

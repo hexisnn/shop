@@ -8,17 +8,17 @@ from app.models import Users
 
 class UserService:
 
-    async def get_one_byUsername(self, user_username, db: AsyncSession):
+    async def get_one_byEmail(self, user_email: str, db: AsyncSession):
         try:
-            
             result = await db.execute(
-                select(Users).where(Users.username == user_username)
+                select(Users).where(Users.email == user_email)
             )
-            
+
             return result.scalar_one_or_none()
 
         except Exception as e:
             raise e
+
 
     async def get_all(self, db: AsyncSession):
         try:
